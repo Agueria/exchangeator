@@ -89,6 +89,8 @@ editable: [docs/diagrams/architecture.drawio](docs/diagrams/architecture.drawio)
 │   ├── architecture.md      # components, data owners, request path
 │   ├── user-journeys.md     # 2 normal + 2 interrupted journeys
 │   ├── risks.md             # initial risk list
+│   ├── requirements.md      # functional + non-functional requirements (Lab 02)
+│   ├── network-scenarios.md # network scenario matrix with expected results (Lab 02)
 │   ├── diagrams/            # architecture.png + .drawio (editable)
 │   └── report/              # Word report built on the course template (M1 draft)
 └── README.md
@@ -128,16 +130,22 @@ The mobile app needs only the service URL (`API_URL`).
 - If NBP is unreachable the service serves its last cached table with the fetch
   time; it refuses trades when that cache is older than the agreed limit.
 
-## Network behaviour policies (proposed in Lab 01, confirmed in Lab 02)
+## Network behaviour policies (confirmed in Lab 02)
 
-| Policy | Proposed value | Reason |
+Full list with IDs: [docs/requirements.md](docs/requirements.md). Scenarios that
+test them: [docs/network-scenarios.md](docs/network-scenarios.md).
+
+| Policy | Value | Requirement |
 |---|---|---|
-| Request timeout | 10 s | Long enough for a slow mobile link, short enough to show a visible "delayed" state |
-| Retry of reads (rates, wallet, history) | automatic, max 2 retries | Reads are safe to repeat |
-| Retry of writes (buy/sell/funding) | **never blind** - the app asks `GET /transactions/{requestId}` first | A repeat must not create a second operation |
-| Offline rule | reads from cache with "last updated" label; **buy/sell/funding blocked** | The app never claims success without server confirmation |
-| Rate freshness for trading | trade refused if the service has no NBP table newer than 7 days | Covers weekends/holidays without allowing very stale prices |
-| Session token lifetime | 24 h | Measurable, simple to test |
+| Response time target | 9 of 10 reads within 1 s, 9 of 10 buy/sell within 2 s (demo network) | N1 |
+| Request timeout | 10 s | N2 |
+| Offline detection | banner within 3 s | N3 |
+| Retry of reads (rates, wallet, history) | automatic, max 2 retries (after 1 s and 2 s) | N4 |
+| Retry of writes (funding, buy, sell) | **never blind**: the app asks `GET /transactions/{requestId}` first and resends with the same `requestId` only if the server never received it | N5, N6 |
+| Offline rule | reads from cache with "last updated" label; **funding, buy and sell blocked** (not queued) | N7, N8 |
+| Synchronisation | within 5 s of reconnecting: resolve pending requests, then refresh wallet, history and rates; server data wins | N9 |
+| Rate freshness for trading | trade refused if the newest NBP table is older than 7 days | N11 |
+| Session token lifetime | 24 h | F2 |
 
 ## Network-failure demonstration
 
@@ -162,4 +170,6 @@ authoritative state.
 - [Architecture and request path](docs/architecture.md)
 - [User journeys](docs/user-journeys.md)
 - [Initial risk list](docs/risks.md)
+- [Requirements](docs/requirements.md)
+- [Network scenario matrix](docs/network-scenarios.md)
 - [Report draft (course template)](docs/report/Project_Documentation_M1_draft.docx)
