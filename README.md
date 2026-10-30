@@ -85,14 +85,17 @@ editable: [docs/diagrams/architecture.drawio](docs/diagrams/architecture.drawio)
 .
 ├── mobile/          # Expo (React Native) client            - from Lab 06
 ├── server/          # Node.js + Express service + SQLite    - from Lab 05
+│   └── src/db/schema.sql    # database schema, same model as the ERD (Lab 04)
 ├── docs/
 │   ├── architecture.md      # components, data owners, request path
 │   ├── user-journeys.md     # 2 normal + 2 interrupted journeys
 │   ├── risks.md             # initial risk list
 │   ├── requirements.md      # functional + non-functional requirements (Lab 02)
 │   ├── network-scenarios.md # network scenario matrix with expected results (Lab 02)
-│   ├── diagrams/            # architecture.png + .drawio (editable)
-│   └── report/              # Word report built on the course template (M1 draft)
+│   ├── traceability.md      # requirement -> use case -> component (Lab 03)
+│   ├── api.md               # API outline, duplicate protection, recovery (Lab 04)
+│   ├── diagrams/            # every diagram as .png + editable .drawio
+│   └── report/              # M1 report: .docx (course template) and .pdf
 └── README.md
 ```
 
@@ -160,7 +163,7 @@ authoritative state.
 
 | Milestone | When | Content | Git revision | Status |
 |---|---|---|---|---|
-| M1 | before the 5th meeting | PDF report (Labs 1-4), editable UML + ERD, API outline, failure scenarios, repo link | _TBD_ | planned |
+| M1 | before the 5th meeting | PDF report (Labs 1-4), editable UML + ERD, API outline, failure scenarios, repo link | tag `m1` | submitted |
 | M2 | after Week 8 | Working client/server prototype | _TBD_ | planned |
 | M3 | after Week 13 | Network-resilient application + test matrix | _TBD_ | planned |
 | M4 | Week 15 | Final system, report, user manual, presentation, live demo | _TBD_ | planned |
@@ -172,4 +175,21 @@ authoritative state.
 - [Initial risk list](docs/risks.md)
 - [Requirements](docs/requirements.md)
 - [Network scenario matrix](docs/network-scenarios.md)
-- [Report draft (course template)](docs/report/Project_Documentation_M1_draft.docx)
+- [Traceability](docs/traceability.md)
+- [API outline](docs/api.md)
+- [Database schema](server/src/db/schema.sql)
+- M1 report: [PDF](docs/report/Project_Documentation_M1.pdf),
+  [Word source (course template)](docs/report/Project_Documentation_M1_draft.docx)
+
+### Diagrams (`docs/diagrams/`, each as `.png` and editable `.drawio`)
+
+| Diagram | File |
+|---|---|
+| Architecture | `architecture` |
+| Use case | `use-case` |
+| Class diagram, mobile side | `class-mobile` |
+| Class diagram, service side | `class-service` |
+| Entity-relationship diagram | `erd` |
+| Data flow: normal read | `dataflow-read` |
+| Data flow: buy | `dataflow-buy` |
+| Data flow: recovery after a lost response | `dataflow-recovery` |
