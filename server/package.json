@@ -1,0 +1,22 @@
+{
+  "name": "exchangeator-server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Web service for the Exchangeator mobile currency exchange (NIMB2026, Project A)",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.2.0",
+    "express": "^4.22.3"
+  },
+  "devDependencies": {
+    "supertest": "^7.3.2"
+  }
+}

@@ -46,7 +46,7 @@ We chose **Project A** over Project B (Smart City Parking) because:
 | Mobile client | **Expo (React Native), JavaScript** | A real phone app. Runs on the phone through the free *Expo Go* app by scanning a QR code; no Android Studio, no emulator. |
 | Web service | **Node.js + Express, JavaScript** | Same language as the client, so one skill set covers the whole project. A few small files. |
 | Database | **SQLite** (`better-sqlite3`) | A single file inside the repository; no database server to install. Supports real transactions, which Lab 09 needs, and a `UNIQUE` constraint gives duplicate protection for free. |
-| Authentication | Password hash (`bcrypt`) + random **session token** stored in the database | Easy to explain: "the server looks the token up". No signing or key management. |
+| Authentication | Password hash (`bcryptjs`) + random **session token** stored in the database | Easy to explain: "the server looks the token up". No signing or key management. |
 | External data | **NBP API**, Table C (bid/ask) | Official buy/sell rates; historical rates come from the same API. |
 | Diagrams | draw.io (`.drawio` files in `docs/diagrams/`) | Editable diagram files are required at M1. |
 | Version control | Git + GitHub | Required by the course. |
@@ -83,8 +83,8 @@ editable: [docs/diagrams/architecture.drawio](docs/diagrams/architecture.drawio)
 
 ```
 .
-├── mobile/          # Expo (React Native) client            - from Lab 06
-├── server/          # Node.js + Express service + SQLite    - from Lab 05
+├── mobile/          # Expo (React Native) client, Lab 06 (see mobile/README.md)
+├── server/          # Node.js + Express service + SQLite, Lab 05 (see server/README.md)
 │   └── src/db/schema.sql    # database schema, same model as the ERD (Lab 04)
 ├── docs/
 │   ├── architecture.md      # components, data owners, request path
@@ -94,6 +94,8 @@ editable: [docs/diagrams/architecture.drawio](docs/diagrams/architecture.drawio)
 │   ├── network-scenarios.md # network scenario matrix with expected results (Lab 02)
 │   ├── traceability.md      # requirement -> use case -> component (Lab 03)
 │   ├── api.md               # API outline, duplicate protection, recovery (Lab 04)
+│   ├── design-changes.md    # changes against the M1 design (from Lab 05)
+│   ├── evidence/            # test runs and screenshots per lab
 │   ├── diagrams/            # every diagram as .png + editable .drawio
 │   └── report/              # M1 report: .docx (course template) and .pdf
 └── README.md
@@ -101,26 +103,55 @@ editable: [docs/diagrams/architecture.drawio](docs/diagrams/architecture.drawio)
 
 ## Getting started
 
-_To be completed in Lab 05-06. Planned commands:_
+Requirements: Node.js 22, a phone with the **Expo Go** app, phone and laptop on
+the same Wi-Fi.
+
+**1. Web service** (creates the SQLite file and a test user on first start)
 
 ```
-# service (creates the SQLite file on first start)
 cd server
 npm install
 npm run dev
+```
 
-# mobile (prints a QR code; open it with Expo Go on the phone)
+It prints the address for the phone, for example `reachable at http://192.168.1.11:3000`.
+Run `npm test` for the automated tests.
+
+**2. Mobile app**
+
+```
 cd mobile
+copy .env.example .env      (macOS / Linux: cp .env.example .env)
+```
+
+Put the printed address in `mobile/.env` (`EXPO_PUBLIC_API_URL=...`), then:
+
+```
 npm install
 npx expo start
 ```
 
+Scan the QR code with Expo Go. Details and troubleshooting:
+[server/README.md](server/README.md), [mobile/README.md](mobile/README.md).
+
 ### Configuration (no secrets in Git)
 
-Each component reads a local `.env` file that is **not** committed.
-`.env.example` will list every variable with placeholder values:
-`PORT`, `DATABASE_FILE`, `NBP_BASE_URL`, `REQUEST_TIMEOUT_MS`, `SESSION_TTL_HOURS`.
-The mobile app needs only the service URL (`API_URL`).
+Each component reads a local `.env` file that is **not** committed; `.env.example`
+lists every variable with a safe default.
+
+| Component | Variables |
+|---|---|
+| server | `PORT`, `DATABASE_FILE`, `DEV_USER_ID` (Lab 05 only, until login exists) |
+| mobile | `EXPO_PUBLIC_API_URL` |
+
+### Progress
+
+| Lab | What works | Evidence |
+|---|---|---|
+| 05 | Service + SQLite: `GET /wallet` (read), `POST /wallet/fund` (write) with validation and duplicate protection, 8 automated tests | [docs/evidence/lab05.md](docs/evidence/lab05.md) |
+| 06 | Expo app: Wallet and Add PLN screens over HTTP; loading, success and error states; validation error vs. no connection; 10 s timeout | [docs/evidence/lab06/](docs/evidence/lab06/) |
+
+Changes against the M1 design: [docs/design-changes.md](docs/design-changes.md).
 
 ## External data assumptions (NBP API)
 
@@ -177,6 +208,7 @@ authoritative state.
 - [Network scenario matrix](docs/network-scenarios.md)
 - [Traceability](docs/traceability.md)
 - [API outline](docs/api.md)
+- [Design changes since M1](docs/design-changes.md)
 - [Database schema](server/src/db/schema.sql)
 - M1 report: [PDF](docs/report/Project_Documentation_M1.pdf),
   [Word source (course template)](docs/report/Project_Documentation_M1_draft.docx)
